@@ -1,0 +1,242 @@
+{% extends 'master.html' %}
+{% block zenteno_content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+   
+
+
+        <style>
+            /* Definición de variables */
+            :root {
+                --header_background_color: #333;
+                --header_text_color: #FDFDFD;
+                --alternate_row_background_color: #DDD;
+    
+                --table_width: 750px;
+                --table_body_height: 300px;
+                --column_one_width: 200px;
+                --column_two_width: 200px;
+                --column_three_width: 350px;
+            }
+    
+            /* Estilos */
+            .fixed_headers {
+                width: var(--table_width);
+                table-layout: fixed;
+                border-collapse: collapse;
+    
+                th { text-decoration: underline; }
+                th, td {
+                    padding: 5px;
+                    text-align: left;
+                }
+    
+                td:nth-child(1), th:nth-child(1) { min-width: var(--column_one_width); }
+                td:nth-child(2), th:nth-child(2) { min-width: var(--column_two_width); }
+                td:nth-child(3), th:nth-child(3) { width: var(--column_three_width); }
+    
+                thead {
+                    background-color: var(--header_background_color);
+                    color: var(--header_text_color);
+                    tr {
+                        display: block;
+                        position: relative;
+                    }
+                }
+    
+                tbody {
+                    display: block;
+                    overflow: auto;
+                    width: 100%;
+                    height: var(--table_body_height);
+                    tr:nth-child(even) {
+                        background-color: var(--alternate_row_background_color);
+                    }
+                }
+            }
+    
+            .old_ie_wrapper {
+                height: var(--table_body_height);
+                width: var(--table_width);
+                overflow-x: hidden;
+                overflow-y: auto;
+                tbody { height: auto; }
+            }
+        </style>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12 lead">
+            <ol class="breadcrumb">
+                <li><a href="student.html">Nuevo estudiante</a></li>
+                <li class="active">Listado de estudiantes</li>
+            </ol>
+        </div>
+    </div>
+</div>
+<div class="container-fluid" style="margin: 0 0 50px 0;">
+    <form class="pull-right" style="width: 30% !important;" autocomplete="off">
+        <div class="group-material">
+            <input type="search" style="display: inline-block !important; width: 70%;" class="material-control tooltips-general" placeholder="Buscar estudiante" required="" pattern="[a-zA-ZáéíóúÁÉÍÓÚ ]{1,50}" maxlength="50" data-toggle="tooltip" data-placement="top" title="Escribe los nombres, sin los apellidos">
+            <button class="btn" style="margin: 0; height: 43px; background-color: transparent !important;">
+                <i class="zmdi zmdi-search" style="font-size: 25px;"></i>
+            </button>
+        </div>
+    </form>
+    <h2 class="text-center all-tittles" style="margin: 25px 0; clear: both;">Secciones</h2>
+    <ul class="list-unstyled text-center list-catalog-container">
+        <li class="list-catalog">Sección</li>
+        <li class="list-catalog">Sección</li>
+        <li class="list-catalog">Sección</li>
+        <li class="list-catalog">Sección</li>
+    </ul>
+</div>
+<div class="container-fluid">
+    <div class="container-fluid">
+        <div class="container-fluid">
+            <h2 class="text-center all-tittles">Listado de Libros</h2>
+            <section class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="box">
+                                <div class="box-body">
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <td>ID Libro</td>
+                                            <td>
+                                                <input id="txIdLibro" name="txIdLibro" maxlength="10" type="text" class="form-control" value="">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Título</td>
+                                            <td>
+                                                <input id="txTitulo" name="txTitulo" maxlength="200" size="30" type="text" class="form-control" value="">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Editorial</td>
+                                            <td>
+                                                <select style="width:150px" id="cbEditorial" name="cbEditorial" class="form-control">
+                                                    <option value="0">Seleccionar</option>
+                                                    <option value="1">Penguin Random House</option>
+                                                    <option value="2">HarperCollins</option>
+                                                    <option value="3">Simon & Schuster</option>
+                                                    <option value="4">Macmillan</option>
+                                                    <option value="5">Hachette</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Categoría</td>
+                                            <td>
+                                                <select style="width:150px" id="cbCategoria" name="cbCategoria" class="form-control">
+                                                    <option value="0">Seleccionar</option>
+                                                    <option value="1">Ficción</option>
+                                                    <option value="2">Ciencia</option>
+                                                    <option value="3">Historia</option>
+                                                    <option value="4">Fantasía</option>
+                                                    <option value="5">No Ficción</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Género</td>
+                                            <td>
+                                                <select style="width:150px" id="cbGenero" name="cbGenero" class="form-control">
+                                                    <option value="0">Seleccionar</option>
+                                                    <option value="1">Drama</option>
+                                                    <option value="2">Comedia</option>
+                                                    <option value="3">Terror</option>
+                                                    <option value="4">Romance</option>
+                                                    <option value="5">Acción</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Idioma</td>
+                                            <td>
+                                                <select style="width:150px" id="cbIdioma" name="cbIdioma" class="form-control">
+                                                    <option value="0">Seleccionar</option>
+                                                    <option value="1">Español</option>
+                                                    <option value="2">Inglés</option>
+                                                    <option value="3">Francés</option>
+                                                    <option value="4">Alemán</option>
+                                                    <option value="5">Italiano</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tapa</td>
+                                            <td>
+                                                <select style="width:150px" id="cbTapa" name="cbTapa" class="form-control">
+                                                    <option value="0">Seleccionar</option>
+                                                    <option value="1">Dura</option>
+                                                    <option value="2">Blanda</option>
+                                                    <option value="3">Con Solapa</option>
+                                                    <option value="4">Sin solapa</option>
+                                                    <option value="5">Rústica</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Origen</td>
+                                            <td>
+                                                <select style="width:150px" id="cbOrigen" name="cbOrigen" class="form-control">
+                                                    <option value="0">Seleccionar</option>
+                                                    <option value="1">Nacional</option>
+                                                    <option value="2">Importado</option>
+                                                    <option value="3">Traducido</option>
+                                                    <option value="4">Original</option>
+                                                    <option value="5">Digital</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Estado</td>
+                                            <td>
+                                                <select style="width:150px" id="cbEstado" name="cbEstado" class="form-control">
+                                                    <option value="0">Seleccionar</option>
+                                                    <option value="1">Nuevo</option>
+                                                    <option value="2">Usado</option>
+                                                    <option value="3">Reacondicionado</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <button id="btLeer" class="btn btn-primary" onclick="leer()">Listar</button>
+                                                <button id="btModificar" class="btn btn-secondary" onclick="modificarLibro()">Modificar</button>
+                                                <button id="btAgregar" class="btn btn-success" onclick="agregarLibro()">Agregar</button>
+                                                <button id="btEliminar" class="btn btn-danger" onclick="eliminarLibro()">Eliminar</button>
+                                                <button id="btLimpiar" class="btn btn-warning" onclick="limpiarLibro()">Limpiar</button>
+                                            </td>
+                                        </tr>
+                                        
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<script>
+    function kk(){
+    alert("Area esta en desarrollo")
+}
+    </script>
+  <style>
+    .table-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+    }
+</style>
+<script src="/static/js/libro.js"></script>
+ <!-- SweetAlert2 JS -->
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+
+{% endblock zenteno_content%}

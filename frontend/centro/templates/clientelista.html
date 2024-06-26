@@ -1,0 +1,446 @@
+    {% extends 'master.html' %}
+    {% block zenteno_content %}
+    <style>
+        /* Definición de variables */
+        :root {
+            --header_background_color: #333;
+            --header_text_color: #FDFDFD;
+            --alternate_row_background_color: #DDD;
+
+            --table_width: 750px;
+            --table_body_height: 300px;
+            --column_one_width: 200px;
+            --column_two_width: 200px;
+            --column_three_width: 350px;
+        }
+
+        /* Estilos */
+        .fixed_headers {
+            width: var(--table_width);
+            table-layout: fixed;
+            border-collapse: collapse;
+
+            th { text-decoration: underline; }
+            th, td {
+                padding: 5px;
+                text-align: left;
+            }
+
+            td:nth-child(1), th:nth-child(1) { min-width: var(--column_one_width); }
+            td:nth-child(2), th:nth-child(2) { min-width: var(--column_two_width); }
+            td:nth-child(3), th:nth-child(3) { width: var(--column_three_width); }
+
+            thead {
+                background-color: var(--header_background_color);
+                color: var(--header_text_color);
+                tr {
+                    display: block;
+                    position: relative;
+                }
+            }
+
+            tbody {
+                display: block;
+                overflow: auto;
+                width: 100%;
+                height: var(--table_body_height);
+                tr:nth-child(even) {
+                    background-color: var(--alternate_row_background_color);
+                }
+            }
+        }
+
+        .old_ie_wrapper {
+            height: var(--table_body_height);
+            width: var(--table_width);
+            overflow-x: hidden;
+            overflow-y: auto;
+            tbody { height: auto; }
+        }
+    </style>
+
+    <div class="container-fluid" style="margin: 0 0 50px 0;">
+        <form class="pull-right" style="width: 30% !important;" autocomplete="off">
+            <div class="group-material">
+                <input type="search" style="display: inline-block !important; width: 70%;" class="material-control tooltips-general" placeholder="Buscar estudiante" required="" pattern="[a-zA-ZáéíóúÁÉÍÓÚ ]{1,50}" maxlength="50" data-toggle="tooltip" data-placement="top" title="Escribe los nombres, sin los apellidos">
+                <button class="btn" style="margin: 0; height: 43px; background-color: transparent !important;">
+                    <i class="zmdi zmdi-search" style="font-size: 25px;"></i>
+                </button>
+            </div>
+        </form>
+        <h2 class="text-center all-tittles" style="margin: 25px 0; clear: both;">Secciones</h2>
+        <ul class="list-unstyled text-center list-catalog-container">
+            <li class="list-catalog">Sección</li>
+            <li class="list-catalog">Sección</li>
+            <li class="list-catalog">Sección</li>
+            <li class="list-catalog">Sección</li>
+        </ul>
+    </div>
+    <div class="container-fluid">
+        <div class="container-fluid">
+            <h2 class="text-center all-tittles">Listado de Personas</h2>
+            <section class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="box">
+                                <div class="box-body">
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <td>RUT</td>
+                                            <td>
+                                                <input id="txRut" name="txRut" maxlength="10" type="text" class="form-control" value="">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>DV</td>
+                                            <td>
+                                                <input id="txDv" name="txDv" maxlength="1" type="text" class="form-control" value="">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Nombre</td>
+                                            <td>
+                                                <input id="txNombre" name="txNombre" maxlength="30" size="30" type="text" class="form-control" value="">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Primer Apellido</td>
+                                            <td>
+                                                <input id="txPApellido" name="txPApellido" maxlength="30" size="30" type="text" class="form-control" value="">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Segundo Apellido</td>
+                                            <td>
+                                                <input id="txSApellido" name="txSApellido" maxlength="30" size="30" type="text" class="form-control" value="">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Email</td>
+                                            <td>
+                                                <input id="txEmail" name="txEmail" type="email" class="form-control" value="">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Fecha de Nacimiento</td>
+                                            <td>
+                                                <input id="txFechaNacimiento" name="txFechaNacimiento" type="date" class="form-control">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>País</td>
+                                            <td>
+                                                <select id="cbPais" name="cbPais" class="form-control">
+                                                    <option value="0">Seleccionar</option>
+                                                    <option value="1">Chile</option>
+                                                    <option value="2">Argentina</option>
+                                                    <option value="3">Perú</option>
+                                                    <option value="4">Brasil</option>
+                                                    <option value="5">Uruguay</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Comuna</td>
+                                            <td>
+                                                <select id="cbComuna" name="cbComuna" type="text" class="form-control">
+                                                    <option value="0">Seleccionar</option>
+                                                    <option value="1">Santiago Centro</option>
+                                                    <option value="2">Viña del Mar</option>
+                                                    <option value="3">Concepción</option>
+                                                    <option value="4">Temuco</option>
+                                                    <option value="5">Puerto Montt</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Género</td>
+                                            <td>
+                                                <select id="cbGenero" name="cbGenero" type="text" class="form-control">
+                                                    <option value="0">Selecionar</option>
+                                                    <option value="1">Masculino</option>
+                                                    <option value="2">Femenino</option>
+                                                    <option value="3">No Binario</option>
+                                                    <option value="4">Otro</option>
+                                                    <option value="5">Prefiero no decir</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <button id="btLeer" class="btn btn-primary" onclick="leer()">Listar</button>
+                                                <button id="btModificar" class="btn btn-secondary" onclick="modificarPersona()">Modificar</button>        
+                                                <button id="btAgregar" class="btn btn-success" onclick="agregar()">Agregar</button>        
+                                                <button id="btEliminar" class="btn btn-danger" onclick="eliminar()">Eliminar</button>        
+                                                <button id="btLimpiar" class="btn btn-warning" onclick="limpiar()">Limpiar</button>
+                                            </td>
+                                        </tr> 
+                                    </table>    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <script>
+        function kk(){
+        alert("Area esta en desarrollo")
+    }
+        </script>
+    <style>
+        .table-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+    </style>
+
+
+    <script>
+    var url_api = 'http://localhost:9010/venta/';
+    var lo_path = 'personas/';
+    var pais_path = 'pais/';
+    var comuna_path = 'comuna/';
+    var genero_path = 'generos/';
+    var estado_path = 'estado/';
+
+    function leer() {
+        var rut = $('#txRut').val(); // Obtener el valor del campo de texto de Rut
+        var pathUrl = url_api + lo_path + rut; // Construir la URL para la solicitud AJAX
+
+        // Realizar la solicitud AJAX usando jQuery
+        $.ajax({
+            type: "GET",
+            url: pathUrl,
+            dataType: "json",
+            beforeSend: function() {
+                console.log('Cargando información de la persona...'); // Mensaje de carga
+            },
+            success: function(response) {
+                console.log('Respuesta:', response); // Mostrar la respuesta en la consola
+
+                // Verificar si se recibió una respuesta válida
+                if (response && response.rut) {
+                    // Asignar los valores recibidos a los campos del formulario
+                    $('#txRut').val(response.rut);
+                    $('#txDv').val(response.dv);
+                    $('#txNombre').val(response.nombre);
+                    $('#txPApellido').val(response.papellido);
+                    $('#txSApellido').val(response.sapellido);
+                    $('#txEmail').val(response.email);
+                    $('#cbComuna').val(response.comuna);
+                    $('#cbGenero').val(response.genero);
+
+                    // Formatear y asignar la fecha de nacimiento
+                    var fechaNacimiento = new Date(response.fechaNacimiento);
+                    var fechaFormato = fechaNacimiento.getFullYear() + '-' + (fechaNacimiento.getMonth() + 1).toString().padStart(2, '0') + '-' + fechaNacimiento.getDate().toString().padStart(2, '0');
+                    $('#txFechaNacimiento').val(fechaFormato);
+
+                    $('#cbPais').val(response.pais);
+                } else {
+                    console.log('No se recibió una respuesta válida'); // Manejo de caso sin respuesta válida
+                    limpiar(); // Llamar a la función limpiar() para restablecer los campos
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error al obtener información de la persona:', error); // Manejo de errores
+                limpiar(); // Restablecer los campos en caso de error
+            }
+        });
+    }
+
+    // Función para limpiar los campos del formulario
+    function limpiar() {
+        $('#txRut').val('');
+        $('#txDv').val('');
+        $('#txNombre').val('');
+        $('#txPApellido').val('');
+        $('#txSApellido').val('');
+        $('#txEmail').val('');
+        $('#cbComuna').val('');
+        $('#cbGenero').val('');
+        $('#txFechaNacimiento').val('');
+        $('#cbPais').val('');
+    }
+
+    function agregar() {
+    var fechaNacimiento = document.getElementById('txFechaNacimiento').value;
+    var fechaFormato = new Date(fechaNacimiento);
+    var fechaNacimientoFormatted = fechaFormato.getFullYear() + '-' + (fechaFormato.getMonth() + 1).toString().padStart(2, '0') + '-' + fechaFormato.getDate().toString().padStart(2, '0');
+
+    var data = {
+        rut: document.getElementById('txRut').value,
+        dv: document.getElementById('txDv').value,
+        nombre: document.getElementById('txNombre').value,
+        papellido: document.getElementById('txPApellido').value,
+        sapellido: document.getElementById('txSApellido').value,
+        email: document.getElementById('txEmail').value,
+        fechaNacimiento: fechaNacimientoFormatted,
+        pais: document.getElementById('cbPais').value,
+        comuna: document.getElementById('cbComuna').value,
+        genero: document.getElementById('cbGenero').value,
+    };
+
+    $.ajax({
+        type: "POST",
+        url: "http://localhost:9010/venta/personas/",
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        dataType: "json",
+        success: function(response) {
+            if (!response.OK) {
+                alert(response.msg);
+                return;
+            }
+            alert('Cliente agregado correctamente');
+            // Nueva alerta de datos agregados
+            alert('Datos agregados correctamente');
+            leer();
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+            console.log('Detalles del error:', xhr.responseText);
+            alert('Error al agregar cliente: ' + xhr.responseText);
+        }
+    });
+}
+
+function modificarPersona() {
+    var rut = document.getElementById('txRut').value;
+
+    var fechaNacimiento = document.getElementById('txFechaNacimiento').value;
+    var fechaFormato = new Date(fechaNacimiento);
+    var fechaNacimientoFormatted = fechaFormato.getFullYear() + '-' + (fechaFormato.getMonth() + 1).toString().padStart(2, '0') + '-' + fechaFormato.getDate().toString().padStart(2, '0');
+
+    var data = {
+        rut: rut,
+        dv: document.getElementById('txDv').value,
+        nombre: document.getElementById('txNombre').value,
+        papellido: document.getElementById('txPApellido').value,
+        sapellido: document.getElementById('txSApellido').value,
+        email: document.getElementById('txEmail').value,
+        fechaNacimiento: fechaNacimientoFormatted,
+        pais: document.getElementById('cbPais').value,
+        comuna: document.getElementById('cbComuna').value,
+        genero: document.getElementById('cbGenero').value,
+    };
+
+    $.ajax({
+        type: "PUT",
+        url: url_api + lo_path + rut + "/",
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        dataType: "json",
+        success: function(response) {
+            if (!response.OK) {
+                alert("Datos modificados");
+                return;
+            }
+            alert('Libro modificado correctamente');
+
+            // Después de modificar correctamente, cargar los datos actualizados
+            leer();
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+            console.log('Detalles del error:', xhr.responseText);
+            alert('Error al modificar libro: ' + xhr.responseText);
+        }
+    });
+}
+
+
+    function eliminar() {
+    var rut = document.getElementById('txRut').value;
+
+    $.ajax({
+        type: "DELETE",
+        url: url_api + lo_path + rut,
+        dataType: "json",
+        success: function(response) {
+            if (!response.OK) {
+                alert(response.msg);
+                return;
+            }
+            alert('Cliente eliminado correctamente');
+            limpiar();
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+            console.log('Detalles del error:', xhr.responseText);
+            alert('Error al eliminar cliente: ' + xhr.responseText);
+        }
+    });
+    }
+
+    function limpiar() {
+    document.getElementById('txRut').value = "";
+    document.getElementById('txDv').value = "";
+    document.getElementById('txNombre').value = "";
+    document.getElementById('txPApellido').value = "";
+    document.getElementById('txSApellido').value = "";
+    document.getElementById('txEmail').value = "";
+    document.getElementById('txFechaNacimiento').value = "";
+    document.getElementById('cbPais').value = "";
+    document.getElementById('cbComuna').value = "";
+    document.getElementById('cbGenero').value = "";
+        document.getElementById('txRut').value = "";
+        document.getElementById('txDv').value = "";
+        document.getElementById('txNombre').value = "";
+        document.getElementById('txPApellido').value = "";
+        document.getElementById('txSApellido').value = "";
+        document.getElementById('txEmail').value = "";
+        document.getElementById('txFechaNacimiento').value = "";
+        document.getElementById('cbPais').value = "";
+        document.getElementById('cbComuna').value = "";
+        document.getElementById('cbGenero').value = "";
+    }
+
+
+
+
+
+
+    function actualizar() {
+        var rut = document.getElementById('txRut').value;
+        var data = {
+            rut: rut,
+            dv: document.getElementById('txDv').value,
+            nombre: document.getElementById('txNombre').value,
+            papellido: document.getElementById('txPApellido').value,
+            sapellido: document.getElementById('txSApellido').value,
+            email: document.getElementById('txEmail').value,
+            fechaNacimiento: document.getElementById('txFechaNacimiento').value,
+            pais: document.getElementById('cbPais').value,
+            comuna: document.getElementById('cbComuna').value,
+            genero: document.getElementById('cbGenero').value,
+        };
+
+        $.ajax({
+            type: "PUT",
+            url: url_api + lo_path + rut,
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            dataType: "json",
+            success: function(response) {
+                if (!response.OK) {
+                    alert(response.msg);
+                    return;
+                }
+                alert('Cliente actualizado correctamente');
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+                console.log('Detalles del error:', xhr.responseText);
+                alert('Error al actualizar cliente: ' + xhr.responseText);
+            }
+        });
+    }
+
+
+    </script>
+    {% endblock zenteno_content%}

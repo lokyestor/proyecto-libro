@@ -1,0 +1,97 @@
+{% extends 'master.html' %}
+{% block zenteno_content %}
+<div class="container-fluid">
+    <div class="container-flat-form">
+        <!-- Formulario para guardar datos de la editorial -->
+        <div class="title-flat-form title-flat-blue">Guardar datos de la editorial</div>
+        <form class="form-padding" id="editorial-form">
+            <div class="row">
+                <div class="col-xs-12">
+                    <legend><i class="zmdi zmdi-balance"></i> &nbsp; Datos de la editorial</legend><br>
+                </div>
+                <div class="col-xs-12 col-md-8 offset-md-2">
+                    <div class="group-material">
+                        <input type="number" id="idEditorial" class="material-control tooltips-general" placeholder="ID de la editorial" required pattern="[0-9]*" maxlength="10" data-toggle="tooltip" data-placement="top" title="Solo números, máximo 10 caracteres">
+                        <span class="highlight"></span>
+                        <span class="bar"></span>
+                        <label>ID de la editorial</label>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-8 offset-md-2">
+                    <div class="group-material">
+                        <input type="text" id="nombre" class="material-control tooltips-general" placeholder="Nombre de la editorial" required pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]{1,200}" maxlength="200" data-toggle="tooltip" data-placement="top" title="Escribe el nombre de la editorial">
+                        <span class="highlight"></span>
+                        <span class="bar"></span>
+                        <label>Nombre de la editorial</label>
+                    </div>
+                </div>
+                <div class="col-xs-12 text-center">
+                    <p>
+                        <button type="reset" class="btn btn-info" style="margin-right: 20px;" onclick="limpiarFormulario()"><i class="zmdi zmdi-roller"></i> &nbsp;&nbsp; Limpiar</button>
+                        <button type="button" class="btn btn-primary" onclick="agregarEditorial()"><i class="zmdi zmdi-floppy"></i> &nbsp;&nbsp; Guardar</button>
+                        <button type="button" class="btn btn-danger" onclick="eliminarEditorial()"><i class="zmdi zmdi-delete"></i> &nbsp;&nbsp; Eliminar</button>
+                        <!-- Enlace para ir a la ruta listar_editoriales.html -->
+                        <a href="/libro/base/" class="btn btn-secondary"><i class="zmdi zmdi-view-list"></i> &nbsp;&nbsp; Listar Editoriales</a>
+                    </p>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<!-- Modal para listar editoriales -->
+<script src="/static/js/editorial.js"></script>
+<script>
+    var url_api = 'http://localhost:9010/venta/';
+    var lo_path = 'editorial/';
+    function agregarEditorial() {
+    var data = {
+        idEditorial: document.getElementById('idEditorial').value,
+        nombre: document.getElementById('nombre').value
+    };
+
+    $.ajax({
+        type: "POST",
+        url: url_api + lo_path,
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        dataType: "json",
+        success: function(response) {
+            console.log('Respuesta del servidor:', response);
+            swal({
+                title: "¡Éxito!",
+                text: "Editorial agregada correctamente",
+                icon: "success",
+                button: "Aceptar"
+            });
+            limpiarFormulario();
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+            console.log('Detalles del error:', xhr.responseText);
+            swal({
+                title: "Error",
+                text: "Error al agregar la editorial: " + xhr.responseText,
+                icon: "error",
+                button: "Aceptar"
+            });
+        }
+    });
+}
+
+
+function limpiarFormulario() {
+    document.getElementById('idEditorial').value = '';
+    document.getElementById('nombre').value = '';
+}
+
+</script>
+{% endblock zenteno_content%}
+
+<!-- // URL base y ruta específica para las editoriales
+    var url_api = 'http://localhost:9010/venta/';
+    var lo_path = 'editorial/';
+
+    // Función para listar editoriales y mostrar en el modal -->

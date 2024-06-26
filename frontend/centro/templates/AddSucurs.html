@@ -1,0 +1,215 @@
+{% extends 'master.html' %}
+{% block zenteno_content %}
+<title>Gestión de Sucursales</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container-fluid" style="margin: 0 0 50px 0;">
+        <h2 class="text-center all-tittles" style="margin: 25px 0; clear: both;">Gestión de Sucursales</h2>
+        <div class="container-fluid">
+            <section class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="box">
+                                <div class="box-body">
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <td>Código</td>
+                                            <td>
+                                                <input id="txCodigo" name="txCodigo" maxlength="10" type="text" class="form-control" value="">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Nombre</td>
+                                            <td>
+                                                <input id="txNombre" name="txNombre" maxlength="100" size="100" type="text" class="form-control" value="">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Comuna</td>
+                                            <td>
+                                                <select id="cbComuna" name="cbComuna" class="form-control">
+                                                    <option value="0">Seleccionar</option>
+                                                    <!-- Opciones de comuna se cargarán dinámicamente -->
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Dirección</td>
+                                            <td>
+                                                <select id="cbDireccion" name="cbDireccion" class="form-control">
+                                                    <option value="0">Seleccionar</option>
+                                                    <!-- Opciones de dirección se cargan dinámicamente -->
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <button id="btLeer" class="btn btn-primary" onclick="leer()">Listar</button>
+                                                <button id="btAgregar" class="btn btn-success" onclick="agregar()">Agregar</button>        
+                                                <button id="btLimpiar" class="btn btn-warning" onclick="limpiar()">Limpiar</button>
+                                            </td>
+                                        </tr> 
+                                    </table>    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        var url_api = 'http://localhost:9010/venta/sucursal/'; // Ruta base de la API
+        var comunaOptions = {}; // Almacenar opciones de comuna
+        var direccionOptions = {}; // Almacenar opciones de dirección
+
+        // Función para cargar opciones de comuna desde la API
+        function cargarComunas() {
+    $.ajax({
+        type: "GET",
+        url: 'http://localhost:9010/venta/comuna/',
+        dataType: "json",
+        success: function(response) {
+            if (response.OK) {
+                var comunas = response.registro;
+                actualizarOpcionesSelect('#cbComuna', comunas);
+            } else {
+                console.error('Error en respuesta de API de comunas:', response);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error al cargar comunas:', error);
+        }
+    });
+}
+
+// Función para cargar opciones de dirección desde la views
+function cargarDirecciones() {
+    $.ajax({
+        type: "GET",
+        url: 'http://localhost:9010/venta/direcciones/',
+        dataType: "json",
+        success: function(response) {
+            // Verifica que la respuesta sea un array y tenga al menos un elemento
+            if (Array.isArray(response) && response.length > 0) {
+                actualizarOpcionesSelect('#cbDireccion', response);
+            } else {
+                console.error('La respuesta de la API de direcciones es inválida o está vacía:', response);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error al cargar direcciones:', error);
+        }
+    });
+}
+
+// Función para actualizar opciones de un elemento select
+function actualizarOpcionesSelect(selector, opciones) {
+    var select = $(selector);
+    select.empty();
+    select.append($('<option>', {
+        value: '0',
+        text: 'Seleccionar'
+    }));
+    $.each(opciones, function(index, item) {
+        select.append($('<option>', {
+            value: item.idComuna || item.idDireccion, // Ajustar según el campo id de tu API
+            text: item.nombre || item.direccion // Ajustar según el campo nombre de tu API
+        }));
+    });
+}
+
+        // Función para limpiar los campos del formulario
+        function limpiar() {
+            $('#txCodigo').val('');
+            $('#txNombre').val('');
+            $('#cbComuna').val('0');
+            $('#cbDireccion').val('0');
+        }
+
+        // Función para obtener los datos de una sucursal por su código
+        function leer() {
+            var codigo = $('#txCodigo').val().trim();
+            if (codigo === '') {
+                alert('Por favor, ingrese un código de sucursal válido.');
+                return;
+            }
+
+            var pathUrl = url_api + codigo + '/';
+
+            $.ajax({
+                type: "GET",
+                url: pathUrl,
+                dataType: "json",
+                beforeSend: function() {
+                    console.log('Cargando información de la sucursal...');
+                },
+                success: function(response) {
+                    console.log('Respuesta:', response);
+
+                    $('#txCodigo').val(response.codigo);
+                    $('#txNombre').val(response.nombre);
+                    $('#cbComuna').val(response.comuna);
+                    $('#cbDireccion').val(response.direccion);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error al obtener información de la sucursal:', error);
+                    alert('No se encontró la sucursal con el código ingresado.');
+                    limpiar();
+                }
+            });
+        }
+
+        // Función para agregar una nueva sucursal
+        function agregar() {
+            permission_classes = [IsAuthenticated]
+            var codigo = $('#txCodigo').val().trim();
+            var nombre = $('#txNombre').val().trim();
+            var comuna = $('#cbComuna').val();
+            var direccion = $('#cbDireccion').val();
+
+            // Validación básica
+            if (codigo === '' || nombre === '' || comuna === '0' || direccion === '0') {
+                alert('Por favor, complete todos los campos.');
+                return;
+            }
+
+            var data = {
+                codigo: codigo,
+                nombre: nombre,
+                comuna: parseInt(comuna),
+                direccion: parseInt(direccion),
+                fCreacion: '2002-02-05' // Ajustar al formato de fecha requerido por tu base de datos
+            };
+
+            $.ajax({
+                type: "POST",
+                url: url_api,
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(data),
+                success: function(response) {
+                    alert('Sucursal agregada correctamente.');
+                    limpiar();
+                    cargarComunas(); // Actualizar opciones de comuna después de agregar
+                    cargarDirecciones(); // Actualizar opciones de dirección después de agregar
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error al agregar sucursal:', error);
+                    alert('Error al agregar sucursal. Por favor, intente nuevamente.');
+                }
+            });
+        }
+
+        // Al cargar la página, cargar las opciones de comuna y dirección
+        $(document).ready(function() {
+            cargarComunas();
+            cargarDirecciones();
+        });
+    </script>
+{% endblock zenteno_content%}

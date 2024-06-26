@@ -1,0 +1,173 @@
+{% extends 'master.html' %}
+{% block zenteno_content %}
+
+<title>Listado de Personas</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<style>
+    body {
+        overflow: hidden; /* Oculta el desbordamiento del contenido */
+    }
+    .container-fluid {
+        padding-top: 20px;
+    }
+    .table-responsive {
+        margin-bottom: 20px;
+    }
+    .div-table {
+        width: 100%;
+    }
+    .div-table-cell {
+        display: table-cell;
+        padding: 10px;
+        border: 1px solid #ddd;
+        text-align: center;
+    }
+    .div-table-row {
+        display: table-row;
+    }
+    .div-table-row-list {
+        display: table-header-group;
+        background-color: #DFF0D8; /* Color de fondo para la fila de encabezado */
+        font-weight: bold;
+    }
+    .search-container {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .search-input {
+        width: 60%;
+        padding: 8px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+    .search-button {
+        padding: 8px 16px;
+        background-color: #007bff; /* Color azul */
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+</style>
+</head>
+<body>
+    <div class="container-fluid">
+        <h2 class="text-center all-tittles">Listado de Personas</h2>
+
+        <!-- Campo de búsqueda por RUT -->
+        <div class="search-container">
+            <input id="buscarPersona" class="search-input" type="text" placeholder="Buscar por RUT-DV..." oninput="buscarPersona()" />
+        </div>
+
+        <!-- Tabla de Personas -->
+        <div class="table-responsive">
+            <table id="personas-table" class="table">
+                <thead>
+                    <tr class="div-table-row div-table-row-list">
+                        <th class="div-table-cell" style="width: 5%;">#</th>
+                        <th class="div-table-cell" style="width: 10%;">RUT</th>
+                        <th class="div-table-cell" style="width: 15%;">Apellidos</th>
+                        <th class="div-table-cell" style="width: 10%;">Nombres</th>
+                        <th class="div-table-cell" style="width: 15%;">Email</th>
+                        <th class="div-table-cell" style="width: 10%;">Fecha Nacimiento</th>
+                        <th class="div-table-cell" style="width: 10%;">País</th>
+                        <th class="div-table-cell" style="width: 10%;">Comuna</th>
+                        <th class="div-table-cell" style="width: 5%;">Género</th>
+                        <th class="div-table-cell" style="width: 5%;">Actualizar</th>
+                        <th class="div-table-cell" style="width: 5%;">Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Aquí se llenarán dinámicamente las filas de las personas -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const url_api = 'http://localhost:9010/venta/'; // URL base de tu API
+        const lo_path = 'personas/'; // Endpoint para obtener personas
+
+        $(document).ready(function() {
+            listarPersonas();
+        });
+
+        function listarPersonas() {
+            $.ajax({
+                type: "GET",
+                url: url_api + lo_path,
+                dataType: "json",
+                success: function(data) {
+                    const tbody = $('#personas-table tbody');
+                    tbody.empty(); // Limpiar el contenido anterior
+
+                    data.forEach((persona, index) => {
+                        const row = `
+                            <tr>
+                                <td class="div-table-cell">${index + 1}</td>
+                                <td class="div-table-cell">${persona.rut}</td>
+                                <td class="div-table-cell">${persona.papellido} ${persona.sapellido}</td>
+                                <td class="div-table-cell">${persona.nombre}</td>
+                                <td class="div-table-cell">${persona.email}</td>
+                                <td class="div-table-cell">${new Date(persona.fechaNacimiento).toLocaleDateString()}</td>
+                                <td class="div-table-cell">${persona.pais}</td>
+                                <td class="div-table-cell">${persona.comuna}</td>
+                                <td class="div-table-cell">${persona.genero}</td>
+                                <td class="div-table-cell"><button class="btn btn-primary" onclick="actualizarPersona()">Actualizar</button></td>
+                                <td class="div-table-cell"><button class="btn btn-danger" onclick="eliminarPersona('${persona.rut}')">Eliminar</button></td>
+                            </tr>
+                        `;
+                        tbody.append(row);
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error al obtener las personas:', error);
+                }
+            });
+        }
+
+        function buscarPersona() {
+            const searchValue = $('#buscarPersona').val().toLowerCase();
+
+            $('#personas-table tbody tr').each(function() {
+                const rut = $(this).find('td:nth-child(2)').text().toLowerCase();
+                if (rut.includes(searchValue)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+
+        function actualizarPersona() {
+            // Redirigir a la página de actualización sin ID
+            window.location.href = '/libro/modificarLista/';
+        }
+
+        function eliminarPersona(rut) {
+            // Mostrar una alerta de confirmación
+            if (confirm('¿Está seguro de que desea eliminar a esta persona?')) {
+                $.ajax({
+                    type: "DELETE",
+                    url: url_api + lo_path + rut, // Suponiendo que el endpoint DELETE es /personas/{rut}
+                    success: function(response) {
+                        alert('Persona eliminada correctamente');
+                        listarPersonas(); // Actualizar la lista después de la eliminación
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error al eliminar la persona:', error);
+                        alert('Error al eliminar la persona');
+                    }
+                });
+            }
+        }
+    </script>
+{% endblock zenteno_content %}
+

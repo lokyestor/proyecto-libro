@@ -1,0 +1,259 @@
+{% extends 'master.html' %}
+{% block zenteno_content %}
+    <title>Género Libro List</title>
+    <style>
+        :root {
+            --header_background_color: #333;
+            --header_text_color: #FDFDFD;
+            --alternate_row_background_color: #DDD;
+            --table_width: 750px;
+            --table_body_height: 300px;
+            --column_one_width: 200px;
+            --column_two_width: 200px;
+            --column_three_width: 350px;
+        }
+
+        .fixed_headers {
+            width: var(--table_width);
+            table-layout: fixed;
+            border-collapse: collapse;
+        }
+
+        .fixed_headers th {
+            text-decoration: underline;
+        }
+
+        .fixed_headers th, .fixed_headers td {
+            padding: 5px;
+            text-align: left;
+        }
+
+        .fixed_headers td:nth-child(1), .fixed_headers th:nth-child(1) {
+            min-width: var(--column_one_width);
+        }
+
+        .fixed_headers td:nth-child(2), .fixed_headers th:nth-child(2) {
+            min-width: var(--column_two_width);
+        }
+
+        .fixed_headers td:nth-child(3), .fixed_headers th:nth-child(3) {
+            width: var(--column_three_width);
+        }
+
+        .fixed_headers thead {
+            background-color: var(--header_background_color);
+            color: var(--header_text_color);
+        }
+
+        .fixed_headers thead tr {
+            display: block;
+            position: relative;
+        }
+
+        .fixed_headers tbody {
+            display: block;
+            overflow: auto;
+            width: 100%;
+            height: var(--table_body_height);
+        }
+
+        .fixed_headers tbody tr:nth-child(even) {
+            background-color: var(--alternate_row_background_color);
+        }
+
+        .old_ie_wrapper {
+            height: var(--table_body_height);
+            width: var(--table_width);
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        .table-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid" style="margin: 0 0 50px 0;">
+        <form class="pull-right" style="width: 30% !important;" autocomplete="off">
+            <div class="group-material">
+                <input type="search" style="display: inline-block !important; width: 70%;" class="material-control tooltips-general" placeholder="Buscar género" required="" maxlength="50" data-toggle="tooltip" data-placement="top" title="Escribe el nombre del género">
+                <button class="btn" style="margin: 0; height: 43px; background-color: transparent !important;">
+                    <i class="zmdi zmdi-search" style="font-size: 25px;"></i>
+                </button>
+            </div>
+        </form>
+        <h2 class="text-center all-tittles" style="margin: 25px 0; clear: both;">Secciones</h2>
+        <ul class="list-unstyled text-center list-catalog-container">
+            <li class="list-catalog">Sección</li>
+            <li class="list-catalog">Sección</li>
+            <li class="list-catalog">Sección</li>
+            <li class="list-catalog">Sección</li>
+        </ul>
+    </div>
+
+    <div class="container-fluid">
+        <div class="container-fluid">
+            <h2 class="text-center all-tittles">Listado de Géneros de Libros</h2>
+            <section class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="box">
+                                <div class="box-body">
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <td>ID Género</td>
+                                            <td>
+                                                <input id="txIdGenero" name="txIdGenero" type="text" class="form-control" value="">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Nombre Género</td>
+                                            <td>
+                                                <input id="txNombreGenero" name="txNombreGenero" type="text" class="form-control" value="">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <button id="btLeer" class="btn btn-primary" onclick="leer()">Listar</button>
+                                                <button id="btAgregar" class="btn btn-success" onclick="agregar()">Agregar</button>        
+                                                <button id="btEliminar" class="btn btn-danger" onclick="eliminar()">Eliminar</button>        
+                                                <button id="btLimpiar" class="btn btn-warning" onclick="limpiar()">Limpiar</button>
+                                            </td>
+                                        </tr> 
+                                    </table>    
+                                    <input type="text" id="buscarIdGenero" placeholder="Buscar por ID" class="form-control">
+                                    <table id="tablaGeneros" class="table table-bordered fixed_headers">
+                                        <thead>
+                                            <tr>
+                                                <th>ID Género</th>
+                                                <th>Nombre Género</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Aquí se añadirán las filas dinámicamente -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        var url_api = 'http://localhost:9010/venta/';
+        var generos_path = 'generos/';
+
+        function leer() {
+            var pathUrl = url_api + generos_path;
+
+            $.ajax({
+                type: "GET",
+                url: pathUrl,
+                dataType: "json",
+                beforeSend: function() {
+                    console.log('Cargando información de los géneros...');
+                },
+                success: function(response) {
+                    if (response && Array.isArray(response)) {
+                        var tbody = $('#tablaGeneros tbody');
+                        tbody.empty(); // Limpiar la tabla antes de añadir los nuevos datos
+
+                        response.forEach(function(genero) {
+                            var fila = `<tr>
+                                            <td>${genero.idGenero}</td>
+                                            <td>${genero.genero}</td>
+                                        </tr>`;
+                            tbody.append(fila);
+                        });
+                    } else {
+                        console.log('No se recibió una respuesta válida');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error al obtener información de los géneros:', error);
+                }
+            });
+        }
+
+        function agregar() {
+            var data = {
+                idGenero: $('#txIdGenero').val(),
+                genero: $('#txNombreGenero').val(),
+            };
+
+            $.ajax({
+                type: "POST",
+                url: url_api + generos_path,
+                data: JSON.stringify(data),
+                contentType: "application/json", // Importante: indicar que el contenido es JSON
+                dataType: "json",
+                success: function(response) {
+                    if (response && response.OK) {
+                        alert('Género agregado correctamente');
+                        limpiar();
+                        leer(); // Actualizar la tabla
+                    } else {
+                        alert(response.msg || 'Error al agregar género');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    console.log('Detalles del error:', xhr.responseText);
+                    alert('Error al agregar género: ' + xhr.responseText);
+                }
+            });
+        }
+
+        function eliminar() {
+            var idGenero = $('#txIdGenero').val();
+
+            $.ajax({
+                type: "DELETE",
+                url: url_api + generos_path + idGenero,
+                dataType: "json",
+                success: function(response) {
+                    if (response && response.OK) {
+                        alert('Género eliminado correctamente');
+                        limpiar();
+                        leer(); // Actualizar la tabla
+                    } else {
+                        alert(response.msg || 'Error al eliminar género');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    console.log('Detalles del error:', xhr.responseText);
+                    alert('Error al eliminar género: ' + xhr.responseText);
+                }
+            });
+        }
+
+        function limpiar() {
+            $('#txIdGenero').val('');
+            $('#txNombreGenero').val('');
+        }
+
+        $(document).ready(function() {
+            leer();
+
+            // Buscador por ID
+            $('#buscarIdGenero').on('input', function() {
+                var searchValue = $(this).val().toLowerCase();
+                $('#tablaGeneros tbody tr').filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(searchValue) > -1)
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
+{% endblock zenteno_content %}

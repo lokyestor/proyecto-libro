@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Pago</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('/static/assets/img/f225f0da5b621b872f6513d59f89a9b6.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 350px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .container label {
+            display: block;
+            margin-top: 6px;
+        }
+        .container input, .container select {
+            width: 100%;
+            padding: 6px;
+            margin-top: 4px;
+            box-sizing: border-box;
+        }
+        .container .payment-icons {
+            display: flex;
+            gap: 5px;
+            margin-top: 5px;
+        }
+        .container .payment-icons img {
+            width: 50px;
+        }
+        .container .expiration {
+            display: flex;
+            gap: 5px;
+        }
+        .container .expiration input {
+            width: 45%;
+        }
+        .container .csc-help {
+            font-size: 10px;
+            color: blue;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        .container button {
+            width: 100%;
+            padding: 8px;
+            background-color: orange;
+            border: none;
+            color: white;
+            font-size: 14px;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+        .error-message {
+            color: red;
+            font-size: 20px;
+            text-align: center;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<div class="container" id="form-container">
+    <form id="paymentForm">
+        <label for="person-rut">Persona (RUT):</label>
+        <input type="text" id="person-rut" name="person-rut">
+        
+        <label for="country">País:</label>
+        <select id="country" name="country">
+            <option value="">Seleccione un país</option>
+        </select>
+
+        <label for="name">Nombre:</label>
+        <input type="text" id="name" name="name" disabled>
+
+        <label for="surname">Apellidos:</label>
+        <input type="text" id="surname" name="surname" disabled>
+
+        <label for="card-number">Número de tarjeta:</label>
+        <input type="text" id="card-number" name="card-number">
+
+        <label for="payment-type">Tipo de pago:</label>
+        <select id="payment-type" name="payment-type">
+            <option value="">Seleccione un tipo de pago</option>
+        </select>
+
+        <label for="expiry-date">Fecha de vencimiento:</label>
+        <div class="expiration">
+            <input type="text" id="expiry-month" name="expiry-month" placeholder="mm">
+            <input type="text" id="expiry-year" name="expiry-year" placeholder="aa">
+        </div>
+
+        <label for="csc">CSC: <span id="csc-help" class="csc-help">(¿Qué es esto?)</span></label>
+        <input type="text" id="csc" name="csc">
+        
+        <label for="address1">Línea de dirección de facturación 1:</label>
+        <input type="text" id="address1" name="address1">
+
+        <label for="address2">Línea de dirección de facturación 2: <small>(opcional)</small></label>
+        <input type="text" id="address2" name="address2">
+
+        <label for="postal-code">Código postal:</label>
+        <input type="text" id="postal-code" name="postal-code">
+
+        <label for="province">Provincia:</label>
+        <select id="province" name="province">
+            <option value="">Seleccione una provincia</option>
+        </select>
+
+        <label for="city">Ciudad:</label>
+        <select id="city" name="city">
+            <option value="">Seleccione una ciudad</option>
+        </select>
+
+        <label for="phone">Teléfono celular:</label>
+        <input type="text" id="phone" name="phone" maxlength="15" pattern="[0-9+]+" title="Ingrese solo números y el símbolo '+'">
+
+        <label for="email">Correo electrónico:</label>
+        <input type="email" id="email" name="email">
+        <a href="/libro/registroPago/">
+            <button type="button">REGISTRARSE</button>
+        </a>
+        <button type="button" onclick="agregar()">PAGAR</button>
+    </form>
+</div>
+
+<div id="error-message" class="error-message" style="display: none;">
+    Acceso denegado.  Vuelve por donde viniste.
+</div>
+
+<script>
+    var url_api = 'http://localhost:9010/venta/';
+    var formData = {}; // Variable global para almacenar los datos del formulario
+
+    function cargarPersona(rut) {
+        var rutSinGuion = rut.replace(/\D/g, '');
+        $.ajax({
+            type: "GET",
+            url: url_api + 'personas/' + rutSinGuion + '/',
+            dataType: "json",
+            success: function(response) {
+                $('#person-rut').val(rut + '-' + response.dv);
+                $('#name').val(response.nombre);
+                $('#surname').val(response.papellido + ' ' + response.sapellido);
+                $('#phone').val(response.telefono);
+                $('#email').val(response.email);
+
+                if (response.idPais) {
+                    cargarPaises(response.idPais, function() {
+                        if (response.idProvincia) {
+                            cargarProvincias(response.idPais, response.idProvincia, function() {
+                                if (response.idComuna) {
+                                    cargarCiudades(response.idProvincia, response.idComuna);
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    cargarPaises();
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error al cargar detalles de la persona:', error);
+                limpiarFormulario(); // Limpiar los campos en caso de error
+            }
+        });
+    }
+
+    function cargarPaises(idPaisSeleccionado, callback) {
+        $.ajax({
+            type: "GET",
+            url: url_api + 'pais/',
+            dataType: "json",
+            success: function(response) {
+                if (response.OK) {
+                    actualizarOpcionesSelect('#country', response.registro, 'idPais', 'nombre', idPaisSeleccionado);
+                    if (callback) callback();
+                } else {
+                    console.error('Error en respuesta de API de países:', response);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error al cargar países:', error);
+            }
+        });
+    }
+
+    function cargarFormasPago() {
+        $.ajax({
+            type: "GET",
+            url: url_api + 'formapago/',
+            dataType: "json",
+            success: function(response) {
+                if (response.length > 0) {
+                    actualizarOpcionesSelect('#payment-type', response, 'idFPago', 'nombre');
+                } else {
+                    console.error('No se encontraron formas de pago.');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error al cargar formas de pago:', error);
+            }
+        });
+    }
+
+    function cargarProvincias(idPais, idProvinciaSeleccionada, callback) {
+        $.ajax({
+            type: "GET",
+            url: url_api + 'provincia/?pais=' + idPais,
+            dataType: "json",
+            success: function(response) {
+                if (response.OK) {
+                    actualizarOpcionesSelect('#province', response.registro, 'idProvincia', 'nombre', idProvinciaSeleccionada);
+                    $('#city').empty().append($('<option>', {
+                        value: '',
+                        text: 'Seleccione una ciudad'
+                    }));
+                    if (callback) callback();
+                } else {
+                    console.error('Error en respuesta de API de provincias:', response);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error al cargar provincias:', error);
+            }
+        });
+    }
+
+    function cargarCiudades(idProvincia, idComunaSeleccionada) {
+        $.ajax({
+            type: "GET",
+            url: url_api + 'comuna/?provincia=' + idProvincia,
+            dataType: "json",
+            success: function(response) {
+                if (response.OK) {
+                    actualizarOpcionesSelect('#city', response.registro, 'idComuna', 'nombre', idComunaSeleccionada);
+                } else {
+                    console.error('Error en respuesta de API de comunas:', response);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error al cargar comunas:', error);
+            }
+        });
+    }
+
+    function actualizarOpcionesSelect(selector, data, valueField, textField, selectedValue) {
+        var select = $(selector);
+        select.empty();
+        select.append($('<option>', {
+            value: '',
+            text: 'Seleccione una opción'
+        }));
+        $.each(data, function(index, item) {
+            select.append($('<option>', {
+                value: item[valueField],
+                text: item[textField],
+                selected: item[valueField] == selectedValue
+            }));
+        });
+    }
+
+    function registrarse() {
+        var form = $('#paymentForm');
+        var data = form.serializeArray();
+        formData = {};
+
+        $.each(data, function(index, item) {
+            formData[item.name] = item.value;
+        });
+
+        console.log('Datos del formulario:', formData);
+
+        var tipoPago = $('#payment-type').val();
+
+        if (tipoPago === 'Efectivo') {
+            mostrarAlertaEfectivo();
+        } else {
+            mostrarAlertaCompra();
+        }
+
+        form.trigger("reset");
+        limpiarFormulario();
+    }
+
+    function agregar() {
+        var form = $('#paymentForm');
+        var data = form.serializeArray();
+        var allFieldsFilled = true;
+
+        $.each(data, function(index, item) {
+            formData[item.name] = item.value;
+            if (!item.value.trim() && item.name !== 'address2') {
+                allFieldsFilled = false;
+            }
+        });
+
+        if (!allFieldsFilled) {
+            alert('Necesitas rellenar todo el formulario');
+            return;
+        }
+
+        console.log('Datos del formulario:', formData);
+
+        var tipoPago = $('#payment-type').val();
+
+        if (tipoPago === 'Efectivo') {
+            mostrarAlertaEfectivo();
+        } else {
+            mostrarAlertaCompra();
+        }
+
+        form.trigger("reset");
+        limpiarFormulario();
+    }
+
+    function mostrarAlertaEfectivo() {
+        alert('Debe realizar el pago en efectivo en nuestras sucursales.');
+    }
+
+    function mostrarAlertaCompra() {
+        alert('Gracias por tu compra. Se enviará el comprobante de pago al correo.');
+        enviarCorreo(formData.email, 'Código Servipack');
+    }
+
+    function enviarCorreo(email, mensaje) {
+        console.log('Enviando correo a:', email, 'con mensaje:', mensaje);
+        // Implementación para enviar correo electrónico
+        // $.ajax({
+        //     type: "POST",
+        //     url: 'url_para_enviar_correo',
+        //     data: { email: email, message: mensaje },
+        //     success: function(response) {
+        //         console.log('Correo electrónico enviado correctamente.');
+        //     },
+        //     error: function(xhr, status, error) {
+        //         console.error('Error al enviar correo electrónico:', error);
+        //     }
+        // });
+    }
+
+    function limpiarFormulario() {
+        $('#name').val('');
+        $('#surname').val('');
+        $('#phone').val('');
+        $('#email').val('');
+        $('#province').val('');
+        $('#city').empty().append($('<option>', {
+            value: '',
+            text: 'Seleccione una ciudad'
+        }));
+        $('#payment-type').val('');
+        $('#csc').val('');
+        // Limpiar otros campos necesarios
+    }
+
+    $(document).ready(function() {
+        var allowedReferrers = [
+            'http://localhost:9020/libro/home/',
+            'http://localhost:9020/libro/compra/',
+            'http://localhost:9020/libro/registroPago/',
+            'http://localhost:9020/libro/galeria/',
+        ];
+
+        if (!allowedReferrers.includes(document.referrer)) {
+            $('#form-container').hide();
+            $('#error-message').show();
+        } else {
+            $('#form-container').show();
+            $('#error-message').hide();
+            
+            cargarPaises();
+            cargarFormasPago();
+
+            $('#country').change(function() {
+                var idPais = $(this).val();
+                if (idPais.trim() !== '') {
+                    cargarProvincias(idPais);
+                } else {
+                    $('#province').empty().append($('<option>', {
+                        value: '',
+                        text: 'Seleccione una provincia'
+                    }));
+                    $('#city').empty().append($('<option>', {
+                        value: '',
+                        text: 'Seleccione una ciudad'
+                    }));
+                }
+            });
+
+            $('#province').change(function() {
+                var idProvincia = $(this).val();
+                if (idProvincia.trim() !== '') {
+                    cargarCiudades(idProvincia);
+                } else {
+                    $('#city').empty().append($('<option>', {
+                        value: '',
+                        text: 'Seleccione una ciudad'
+                    }));
+                }
+            });
+
+            $('#person-rut').blur(function() {
+                var rut = $(this).val();
+                if (rut.trim() !== '') {
+                    cargarPersona(rut);
+                } else {
+                    limpiarFormulario();
+                }
+            });
+
+            $('#csc-help').click(function() {
+                alert('Número de Verificación de Tarjeta, Valor de Verificación de Tarjeta (CVV), Código de Valor de Verificación de Tarjeta, Código de Verificación de Tarjeta (CVC)');
+            });
+
+            $('#phone').on('input', function() {
+                var phoneNumber = $(this).val().replace(/\D/g, '');
+                $(this).val(phoneNumber.slice(0, 15));
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,248 @@
+{% extends 'master.html' %}
+{% block zenteno_content %}
+<title>Listado de Editoriales</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <style>
+        body {
+            overflow: hidden; /* Oculta el desbordamiento del contenido */
+        }
+        .floating-table-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-height: 80%;
+            overflow-y: auto;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #dc3545; /* Color rojo */
+            border: none;
+            color: white; /* Texto blanco */
+            font-size: 24px; /* Tamaño del icono */
+            border-radius: 50%; /* Forma circular */
+            width: 40px; /* Ancho */
+            height: 40px; /* Alto */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .search-container {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .search-input {
+            width: 60%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .search-button {
+            padding: 8px 16px;
+            background-color: #007bff; /* Color azul */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .table-responsive {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid floating-table-container">
+        <button class="close-button" onclick="window.location.href='/libro/institucion/'">&times;</button>
+        <h2 class="text-center all-tittles">Listado de Editoriales</h2>
+
+        <!-- Campo de búsqueda por ID -->
+        <div class="search-container">
+            <input id="buscarEditorial" class="search-input" type="text" placeholder="Buscar por ID de editorial..." oninput="buscarEditorial()" />
+        </div>
+
+        <!-- Tabla de Editoriales -->
+        <div class="table-responsive">
+            <table id="editoriales-table" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Aquí se llenarán dinámicamente las filas de las editoriales -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="listarEditorialesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Listado de Editoriales</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table id="modal-editoriales-table" class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Aquí se llenarán dinámicamente las filas de las editoriales -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        var url_api = "http://localhost:9010/venta/editorial/";
+
+        // Función para listar todas las editoriales
+        function listarEditoriales() {
+            $.ajax({
+                type: "GET",
+                url: url_api,
+                dataType: "json",
+                success: function(response) {
+                    var data = response.registro;
+                    mostrarEditoriales(data);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error al obtener las editoriales:', error);
+                    alert('Hubo un problema al obtener las editoriales. Inténtalo de nuevo más tarde.');
+                }
+            });
+        }
+
+        // Función para mostrar las editoriales en la tabla principal
+        function mostrarEditoriales(editoriales) {
+            var tbodyEditoriales = $('#editoriales-table tbody');
+            tbodyEditoriales.empty(); // Limpiar contenido previo
+
+            if (editoriales.length === 0) {
+                var newRow = $('<tr></tr>');
+                var cell = $('<td colspan="3"></td>').text('No hay editoriales disponibles');
+                newRow.append(cell);
+                tbodyEditoriales.append(newRow);
+                return;
+            }
+
+            editoriales.forEach(function(editorial) {
+                var newRow = $('<tr></tr>');
+                newRow.append('<td>' + editorial.idEditorial + '</td>');
+                newRow.append('<td>' + editorial.nombre + '</td>');
+                newRow.append('<td><button class="btn btn-danger" onclick="eliminarEditorial(' + editorial.idEditorial + ')"><i class="material-icons">delete</i></button></td>');
+                newRow.attr('data-idEditorial', editorial.idEditorial); // Añadir atributo idEditorial a la fila
+                tbodyEditoriales.append(newRow);
+            });
+        }
+
+        // Función para eliminar una editorial
+        function eliminarEditorial(idEditorial) {
+            if (confirm('¿Estás seguro de que quieres eliminar esta editorial?')) {
+                $.ajax({
+                    type: "DELETE",
+                    url: url_api + idEditorial + '/',
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function(response) {
+                        console.log('Respuesta del servidor:', response);
+                        alert('Editorial eliminada correctamente');
+                        listarEditoriales(); // Volver a cargar la lista de editoriales después de eliminar
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error al eliminar editorial:', error);
+                        alert('Hubo un problema al eliminar la editorial. Inténtalo de nuevo más tarde.');
+                    }
+                });
+            }
+        }
+
+        function buscarEditorial() {
+            var idEditorial = $('#buscarEditorial').val().trim();
+
+            if (idEditorial === '') {
+                listarEditoriales(); // Si el campo está vacío, listar todas las editoriales
+                return;
+            }
+
+            $.ajax({
+                type: "GET",
+                url: url_api + idEditorial,
+                dataType: "json",
+                success: function(response) {
+                    console.log('Respuesta de la API:', response);
+
+                    if (!response || !response.OK || response.count === 0 || !response.registro) {
+                        console.error('No se encontró la editorial con ID', idEditorial);
+                        alert('No se encontró la editorial con ID ' + idEditorial);
+                        return;
+                    }
+
+                    // Mostrar la editorial encontrada en la tabla principal
+                    mostrarUnaEditorial(response.registro);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error al buscar la editorial:', error);
+                    alert('Hubo un problema al buscar la editorial. Inténtalo de nuevo más tarde.');
+                }
+            });
+        }
+
+        // Función para mostrar una sola editorial en la tabla principal
+        function mostrarUnaEditorial(editorial) {
+            var tbodyEditoriales = $('#editoriales-table tbody');
+            tbodyEditoriales.empty(); // Limpiar contenido previo
+
+            var newRow = $('<tr></tr>');
+            newRow.append('<td>' + editorial.idEditorial + '</td>');
+            newRow.append('<td>' + editorial.nombre + '</td>');
+            newRow.append('<td><button class="btn btn-danger" onclick="eliminarEditorial(' + editorial.idEditorial + ')"><i class="material-icons">delete</i></button></td>');
+            newRow.attr('data-idEditorial', editorial.idEditorial); // Añadir atributo idEditorial a la fila
+            tbodyEditoriales.append(newRow);
+        }
+
+        // Llamar listarEditoriales() al cargar la página
+        $(document).ready(function() {
+            listarEditoriales();
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+{% endblock zenteno_content%}

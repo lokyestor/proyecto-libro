@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Registro</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('/static/assets/img/f225f0da5b621b872f6513d59f89a9b6.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 350px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .container label {
+            display: block;
+            margin-top: 6px;
+        }
+        .container input, .container select {
+            width: 100%;
+            padding: 6px;
+            margin-top: 4px;
+            box-sizing: border-box;
+        }
+        .container button {
+            width: 100%;
+            padding: 8px;
+            background-color: orange;
+            border: none;
+            color: white;
+            font-size: 14px;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+        .error-message {
+            color: red;
+            font-size: 20px;
+            text-align: center;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <div id="error-message" class="error-message" style="display: none;">
+        Acceso denegado. Vuelve por donde viniste.
+    </div>
+    <div id="form-container" class="container" style="display: none;">
+        <form id="registration-form">
+            <label for="txRut">RUT:</label>
+            <input type="text" id="txRut" name="rut" required>
+
+            <label for="txDv">Dígito Verificador:</label>
+            <input type="text" id="txDv" name="dv" required>
+
+            <label for="txNombre">Nombre:</label>
+            <input type="text" id="txNombre" name="nombre" required>
+
+            <label for="txPApellido">Primer Apellido:</label>
+            <input type="text" id="txPApellido" name="papellido" required>
+
+            <label for="txSApellido">Segundo Apellido:</label>
+            <input type="text" id="txSApellido" name="sapellido" required>
+
+            <label for="txEmail">Correo Electrónico:</label>
+            <input type="email" id="txEmail" name="email" required>
+
+            <label for="cbComuna">Comuna:</label>
+            <select id="cbComuna" name="id_comuna" required></select>
+
+            <label for="cbGenero">Género:</label>
+            <select id="cbGenero" name="id_genero" required></select>
+
+            <label for="cbPais">País:</label>
+            <select id="cbPais" name="id_pais" required></select>
+
+            <label for="txFechaNacimiento">Fecha de Nacimiento:</label>
+            <input type="date" id="txFechaNacimiento" name="fecha_nacimiento" required>
+
+            <button type="submit">REGISTRARSE</button>
+            <button type="button" class="back-button" onclick="window.location.href='/libro/compra/'">Volver atrás</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var allowedReferrers = [
+                'http://localhost:9020/libro/home/',
+                'http://localhost:9020/libro/compra/',
+                'http://localhost:9020/libro/galeria/',
+            ];
+
+            if (!allowedReferrers.includes(document.referrer)) {
+                document.getElementById('form-container').style.display = 'none';
+                document.getElementById('error-message').style.display = 'block';
+            } else {
+                document.getElementById('form-container').style.display = 'block';
+                document.getElementById('error-message').style.display = 'none';
+
+                fetch('http://localhost:9010/venta/comuna/')
+                    .then(response => response.json())
+                    .then(data => {
+                        const comunaSelect = document.getElementById('cbComuna');
+                        data.registro.forEach(comuna => {
+                            let option = document.createElement('option');
+                            option.value = comuna.idComuna;
+                            option.textContent = comuna.nombre;
+                            comunaSelect.appendChild(option);
+                        });
+                    });
+
+                fetch('http://localhost:9010/venta/pais/')
+                    .then(response => response.json())
+                    .then(data => {
+                        const paisSelect = document.getElementById('cbPais');
+                        data.registro.forEach(pais => {
+                            let option = document.createElement('option');
+                            option.value = pais.idPais;
+                            option.textContent = pais.nombre;
+                            paisSelect.appendChild(option);
+                        });
+                    });
+
+                fetch('http://localhost:9010/venta/api/genero_persona/')
+                    .then(response => response.json())
+                    .then(data => {
+                        const generoSelect = document.getElementById('cbGenero');
+                        data.forEach(genero => {
+                            let option = document.createElement('option');
+                            option.value = genero.idGenero;
+                            option.textContent = genero.nombre;
+                            generoSelect.appendChild(option);
+                        });
+                    });
+
+                document.getElementById('registration-form').addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    agregar();
+                });
+            }
+        });
+
+        var url_api = 'http://localhost:9010/venta/';
+        var lo_path = 'personas/';
+
+        function agregar() {
+            var data = {
+                rut: document.getElementById('txRut').value,
+                dv: document.getElementById('txDv').value,
+                nombre: document.getElementById('txNombre').value,
+                papellido: document.getElementById('txPApellido').value,
+                sapellido: document.getElementById('txSApellido').value,
+                email: document.getElementById('txEmail').value,
+                fechaNacimiento: document.getElementById('txFechaNacimiento').value,
+                pais: document.getElementById('cbPais').value,
+                comuna: document.getElementById('cbComuna').value,
+                genero: document.getElementById('cbGenero').value
+            };
+
+            console.log('Datos a enviar:', data);
+
+            $.ajax({
+                type: "POST",
+                url: url_api + lo_path,
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                dataType: "json",
+                beforeSend: function() {
+                    console.log('Enviando datos...');
+                },
+                // success: function(response) {
+                //     console.log('Respuesta recibida:', response);
+                //     if (response.OK) {
+                //         mostrarMensaje('success', 'Registro completado', 'La persona se registró correctamente.');
+                //         setTimeout(function() {
+                //             window.location.href = '/libro/compra/';
+                //         }, 1500); // Redirigir después de 1.5 segundos
+                //     } else {
+                //         mostrarMensaje('error', 'Error al agregar persona', response.msg || 'Hubo un problema al intentar agregar la persona.');
+                //     }
+                // },
+                // error: function(xhr, status, error) {
+                //     console.error('Error:', error);
+                //     console.log('Detalles del error:', xhr.responseText);
+                //     mostrarMensaje('error', 'Error al agregar persona', 'Hubo un problema al intentar agregar la persona.');
+                // }
+            });
+        }
+
+        function mostrarMensaje(icono, titulo, mensaje) {
+            Swal.fire({
+                icon: icono,
+                title: titulo,
+                text: mensaje,
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    </script>
+</body>
+</html>

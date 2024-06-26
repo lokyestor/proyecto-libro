@@ -1,0 +1,310 @@
+{% extends 'centro.html' %}
+{% block mauricio%}
+
+<!-- Modal -->
+<div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="w-100 pt-1 mb-5 text-right">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action="" method="get" class="modal-content modal-body border-0 p-0">
+            <div class="input-group mb-2">
+                <input type="text" class="form-control" id="inputModalSearch" name="q" placeholder="Search ...">
+                <button type="submit" class="input-group-text bg-success text-light">
+                    <i class="fa fa-fw fa-search text-white"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Start Banner Hero -->
+<div id="template-mo-zay-hero-carousel" class="carousel slide" data-bs-ride="carousel">
+    <ol class="carousel-indicators">
+        <li data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide-to="0" class="active"></li>
+        <li data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide-to="1"></li>
+        <li data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide-to="2"></li>
+    </ol>
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <div class="row p-5">
+                <div class="mx-auto col-md-12 col-lg-12 order-lg-last d-flex justify-content-center align-items-center">
+                    <img class="img-fluid" src="/static/assets/img/80%.jpg" alt="">
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="row p-5">
+                <div class="mx-auto col-md-12 col-lg-12 order-lg-last d-flex justify-content-center align-items-center">
+                    <img class="img-fluid" src="/static/assets/img/50%.jpg" alt="">
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="row p-5">
+                <div class="mx-auto col-md-12 col-lg-12 order-lg-last d-flex justify-content-center align-items-center">
+                    <img class="img-fluid" src="/static/assets/img/luca-newfront.jpeg" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+    <a class="carousel-control-prev text-decoration-none w-auto ps-3" href="#template-mo-zay-hero-carousel" role="button" data-bs-slide="prev">
+        <i class="fas fa-chevron-left"></i>
+    </a>
+    <a class="carousel-control-next text-decoration-none w-auto pe-3" href="#template-mo-zay-hero-carousel" role="button" data-bs-slide="next">
+        <i class="fas fa-chevron-right"></i>
+    </a>
+</div>
+<!-- End Banner Hero -->
+
+<!-- Start Categories of The Month -->
+<section class="container py-9" style="background-color: orange;">
+    <div class="row text-center pt-3">
+        <div class="col-lg-6 m-auto">
+            <h1 class="h1 text-black"> <strong>Categorías Del Mes</strong></h1>
+            <p style="font-family: Arial;">
+                Descubre nuestra selección destacada de libros nuevos y usados, 
+                junto con una variedad de emocionantes juegos de mesa. 
+                Desde éxitos recientes hasta clásicos atemporales, 
+                nuestra tienda ofrece opciones para todos los gustos.
+                Encuentra tu próxima aventura literaria o de juego y disfruta 
+                de momentos inolvidables con amigos y familiares.
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-4 p-5 mt-3">
+            <a href="#"><img src="/static/assets/img/catan.jpg" class="rounded-circle img-fluid border"></a>
+            <h5 class="text-center mt-3 mb-3">Juegos de mesa</h5>
+            <p class="text-center"><button class="btn btn-success add-to-cart" data-title="juegos de mesa" data-price="20000" data-img="/static/assets/img/catan.jpg">Comprar</button></p>
+        </div>
+        <div class="col-12 col-md-4 p-5 mt-3">
+            <a href="#"><img src="/static/assets/img/magic.jpg" class="rounded-circle img-fluid border"></a>
+            <h2 class="h5 text-center mt-3 mb-3">MAGIC</h2>
+            <p class="text-center"><button class="btn btn-success add-to-cart" data-title="MAGIC" data-price="25000" data-img="/static/assets/img/magic.jpg">Comprar</button></p>
+        </div>
+        <div class="col-12 col-md-4 p-5 mt-3">
+            <a href="#"><img src="/static/assets/img/clasicos-del-terror-blog.jpg" class="rounded-circle img-fluid border"></a>
+            <h2 class="h5 text-center mt-3 mb-3">Clásicos De Terror</h2>
+            <p class="text-center"><button class="btn btn-success add-to-cart" data-title="Clásicos De Terror" data-price="30000" data-img="/static/assets/img/clasicos-del-terror-blog.jpg">Comprar</button></p>
+        </div>
+    </div>
+</section>
+<!-- End Categories of The Month -->
+
+<!-- Start Featured Product -->
+<section class="bg-light">
+    <div class="container py-5">
+        <div class="row text-center py-3">
+            <div class="col-lg-6 m-auto">
+                <h1 class="h1">Producto destacado</h1>
+                <p>
+                    Reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                    Excepteur sint occaecat cupidatat non proident.
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-4 mb-4">
+                <div class="card h-100">
+                    <a href="#">
+                        <img src="/static/assets/img/amoeldinero.webp" class="card-img-top" alt="...">
+                    </a>
+                    <div class="card-body">
+                        <ul class="list-unstyled d-flex justify-content-between">
+                            <li>
+                                <i class="text-warning fa fa-star"></i>
+                                <i class="text-warning fa fa-star"></i>
+                                <i class="text-warning fa fa-star"></i>
+                                <i class="text-muted fa fa-star"></i>
+                                <i class="text-muted fa fa-star"></i>
+                            </li>
+                            <li class="text-muted text-right">$10.000</li>
+                        </ul>
+                        <a href="shop-single.html" class="h2 text-decoration-none text-dark">Yo Amo El Dinero</a>
+                        <p class="card-text">
+                            Un programa para transformar tus creencias limitantes y 
+                            catapultar tu vida. ¿Estás lista para recibir dinero en abundancia?
+                        </p>
+                        <p class="text-muted">Reviews (24)</p>
+                        <p class="text-center"><button class="btn btn-success add-to-cart" data-title="Yo Amo El Dinero" data-price="10000" data-img="/static/assets/img/amoeldinero.webp">Añadir al carrito</button></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4 mb-4">
+                <div class="card h-100">
+                    <a href="#">
+                        <img src="/static/assets/img/hierro.png" class="card-img-top" alt="...">
+                    </a>
+                    <div class="card-body">
+                        <ul class="list-unstyled d-flex justify-content-between">
+                            <li>
+                                <i class="text-warning fa fa-star"></i>
+                                <i class="text-warning fa fa-star"></i>
+                                <i class="text-warning fa fa-star"></i>
+                                <i class="text-muted fa fa-star"></i>
+                                <i class="text-muted fa fa-star"></i>
+                            </li>
+                            <li class="text-muted text-right">$25.000</li>
+                        </ul>
+                        <a href="shop-single.html" class="h2 text-decoration-none text-dark">Alas De Hierro</a>
+                        <p class="card-text">
+                            Todos esperaban que Violet Sorrengail muriera en su primer año en el Colegio de Guerra de
+                            Basgiath, incluso ella misma. Pero la Trilla fue tan solo la primera de una serie de pruebas imposibles 
+                            destinadas a deshacerse de los pusilánimes, los indignos y los desafortunados...
+                        </p>
+                        <p class="text-muted">Reviews (48)</p>
+                        <p class="text-center"><button class="btn btn-success add-to-cart" data-title="Alas De Hierro" data-price="25000" data-img="/static/assets/img/hierro.png">Añadir al carrito</button></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4 mb-4">
+                <div class="card h-100">
+                    <a href="#">
+                        <img src="/static/assets/img/siguenaqi.png" class="card-img-top" alt="Aun siguen aquí">
+                    </a>
+                    <div class="card-body">
+                        <ul class="list-unstyled d-flex justify-content-between">
+                            <li>
+                                <i class="text-warning fa fa-star"></i>
+                                <i class="text-warning fa fa-star"></i>
+                                <i class="text-warning fa fa-star"></i>
+                                <i class="text-warning fa fa-star"></i>
+                                <i class="text-warning fa fa-star"></i>
+                            </li>
+                            <li class="text-muted text-right">$15.000</li>
+                        </ul>
+                        <a href="shop-single.html" class="h2 text-decoration-none text-dark">Aun siguen aquí</a>
+                        <p class="card-text">
+                            Adéntrate en el nuevo thriller de Lisa Jewell. Un día de junio de 2019 en Londres,
+                            a la orilla del río Támesis, aparece una bolsa llena de huesos...
+                        </p>
+                        <p class="text-muted">Reviews (74)</p>
+                        <p class="text-center"><button class="btn btn-success add-to-cart" data-title="Aun siguen aquí" data-price="15000" data-img="/static/assets/img/siguenaqi.png">Añadir al carrito</button></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- End Featured Product -->
+
+<!-- Carrito de Compras Flotante -->
+<div class="cart-container collapsed" id="cart-container">
+    <div class="cart-header">
+        <h4>Carrito de Compras</h4>
+        <button class="btn btn-danger btn-sm toggle-cart" id="toggle-cart">⯆</button>
+    </div>
+    <ul id="cart-items" class="list-unstyled">
+        <li>Tu carrito está vacío.</li>
+    </ul>
+    <p><strong>Total: $<span id="cart-total">0</span></strong></p>
+    <!-- Botón para ir a otra ruta -->
+    <p><a href="/libro/compra/" class="btn btn-primary">Proceder al pago</a> <!-- Esta es tu ruta --></p>
+    <!-- Botón para limpiar el carrito -->
+    <p><button id="clear-cart" class="btn btn-danger">Limpiar Carrito</button></p>
+</div>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function() {
+        let cart = [];
+        let total = 0;
+
+        $(".add-to-cart").on("click", function() {
+            const productImg = $(this).data('img');
+            const productTitle = $(this).data('title');
+            const productPrice = parseInt($(this).data('price'));
+
+            // Añadir el producto al carrito
+            cart.push({
+                title: productTitle,
+                img: productImg,
+                price: productPrice
+            });
+
+            // Calcular el total
+            total += productPrice;
+
+            // Actualizar el carrito en el DOM
+            updateCart();
+            // Mostrar el carrito si está oculto
+            $("#cart-container").removeClass("collapsed");
+        });
+
+        function updateCart() {
+            const $cartItems = $("#cart-items");
+            $cartItems.empty();
+
+            cart.forEach((item, index) => {
+                $cartItems.append(
+                    `<li class="media">
+                        <img src="${item.img}" class="mr-3" alt="${item.title}" style="width: 50px; height: 50px;">
+                        <div class="media-body">
+                            <h5 class="mt-0 mb-1">${item.title}</h5>
+                            <p>$${item.price.toLocaleString('es-ES')}</p>
+                        </div>
+                    </li>`
+                );
+            });
+
+            if (cart.length === 0) {
+                $cartItems.append('<li>Tu carrito está vacío.</li>');
+            }
+
+            $("#cart-total").text(total.toLocaleString('es-ES'));
+        }
+
+        $("#toggle-cart").on("click", function() {
+            $("#cart-container").toggleClass("collapsed");
+        });
+
+        $("#clear-cart").on("click", function() {
+            cart = [];
+            total = 0;
+            updateCart();
+        });
+    });
+</script>
+
+<style>
+    .cart-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 300px;
+        max-height: 400px;
+        overflow-y: auto;
+        background-color: #f8f9fa;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 15px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+    .cart-container.collapsed {
+        transform: translateX(100%);
+    }
+    .cart-container h4 {
+        margin-top: 0;
+    }
+    .cart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .toggle-cart {
+        border: none;
+        background: none;
+        font-size: 1.5rem;
+        color: red;
+    }
+    .toggle-cart:hover {
+        color: darkred;
+    }
+</style>
+
+{% endblock mauricio %}
